@@ -1,0 +1,24 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Top 10 Books - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Top 10 Books</h1>
+    <div class="row">
+        {% for book in top_books %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <img src="{{ book.get_cover_url }}" class="card-img-top" alt="{{ book.title }}">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title">{{ book.title|truncatechars:40 }}</h6>
+                    <p class="card-text small text-muted">by {{ book.author }}</p>
+                    <p class="fw-bold">₹{{ book.price }}</p>
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary mt-auto">View</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Authors - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Authors</h1>
+    <div class="row">
+        {% for a in authors %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-3 h-100">
+                <h5 class="mb-1">{{ a.author }}</h5>
+                <p class="mb-0 small text-muted">{{ a.count }} book{{ a.count|pluralize }}</p>
+                <a href="{% url 'book_list' %}?q={{ a.author|urlencode }}" class="stretched-link"></a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No authors found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

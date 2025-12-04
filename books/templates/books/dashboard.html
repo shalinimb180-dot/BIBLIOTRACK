@@ -1,0 +1,262 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Dashboard - BiblioTrack{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">My Dashboard</h1>
+
+<div class="row">
+    <div class="col-lg-6">
+        <h3 class="mb-3">My Orders</h3>
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="card mb-3 order-card">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="order-icon d-flex align-items-center justify-content-center me-2" aria-hidden="true">
+                        <!-- simple order icon -->
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 7h18M5 7v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7" stroke="#5A4FF7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            {% if order.book %}
+                                <a href="{% url 'book_detail' order.book.pk %}" aria-label="View {{ order.get_book_title }}">
+                                    <img src="{{ order.book.get_cover_url }}" alt="{{ order.get_book_title }}" class="rounded" style="width:84px;height:120px;object-fit:cover;">
+                                </a>
+                            {% elif order.user_book and order.user_book.cover_image %}
+                                <img src="{{ order.user_book.cover_image.url }}" alt="{{ order.get_book_title }}" class="rounded" style="width:84px;height:120px;object-fit:cover;">
+                            {% else %}
+                                <img src="/media/books/book_placeholder.svg" alt="No cover" class="rounded" style="width:84px;height:120px;object-fit:cover;">
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-start gap-2">
+                                <div>
+                                    <h5 class="mb-1">{{ order.get_book_title }}</h5>
+                                    <small class="text-muted d-block">Order ID: <strong>{{ order.id }}</strong></small>
+                                    <small class="text-muted">{{ order.ordered_at|date:"M d, Y" }}</small>
+                                </div>
+                            </div>
+                            <div class="mt-2 d-flex align-items-center gap-2">
+                                {% comment %} status badge colors set in CSS via data-status {% endcomment %}
+                                <span class="status-badge" data-status="{{ order.status }}">{{ order.get_status_display }}</span>
+                                <a href="{% url 'track_order' %}?order_id={{ order.id }}" class="btn btn-sm btn-outline-primary">Track Order</a>
+                                <a href="{% url 'book_detail' order.book.pk %}" class="btn btn-sm btn-primary">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">You have not placed any orders yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <h3 class="mb-3">My Reviews</h3>
+        {% for review in reviews %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ review.book.title }}</h5>
+                <div class="star-rating mb-2">
+                    {% for i in "12345"|make_list %}
+                        <i class="fas fa-star{% if review.rating < forloop.counter %}-half-alt{% endif %}"></i>
+                    {% endfor %}
+                </div>
+                <p class="card-text">{{ review.comment }}</p>
+                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <p>No reviews yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h3 class="mb-2">Recently Viewed <small class="text-muted">Based on your browsing</small></h3>
+        <div class="recent-strip-wrapper position-relative">
+            <div class="recent-strip" id="recentStrip">
+                {% for viewed in recently_viewed_books %}
+                <a class="recent-card" href="{% url 'book_detail' viewed.book.pk %}" aria-label="{{ viewed.book.title }}">
+                    <div class="recent-card-media">
+                        <img src="{{ viewed.book.get_cover_url }}" alt="{{ viewed.book.title }}" loading="lazy">
+                    </div>
+                    <div class="recent-card-body">
+                        <h6 class="mb-1">{{ viewed.book.title }}</h6>
+                        <p class="mb-1 text-muted small">by {{ viewed.book.author }}</p>
+                        <small class="text-muted">Last viewed {{ viewed.viewed_at|timesince }} ago</small>
+                    </div>
+                </a>
+                {% empty %}
+                <p class="text-muted">No recently viewed books.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h3 class="mb-3">Recommended For You <small class="text-muted">Because you viewed similar books</small></h3>
+        <div id="recommendations" class="recommend-grid">
+            {% if recommendations %}
+                {% for book in recommendations %}
+                <div class="recommendation-card p-2">
+                    <div class="card h-100 book-card" style="border-radius:20px;">
+                        <div class="position-relative">
+                            <img src="{{ book.get_cover_url }}" class="card-img-top" alt="{{ book.title }}" loading="lazy" style="height:260px;">
+                            <div class="recommendation-card .ai-badge"> 
+                                <span class="ai-badge">AI</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text small text-muted mb-1">by {{ book.author }}</p>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                {% for tag in book.get_genre_list %}
+                                    <span class="badge bg-light text-muted genre-tag">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="star-rating text-warning mb-1">★ ★ ★ ★ ☆</div>
+                                    <small class="text-muted">₹{{ book.price }}</small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary add-to-cart" data-book-id="{{ book.pk }}">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- recommendations loaded by AJAX below -->
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load recommendations into the grid (AJAX)
+    fetch('/api/recommendations/')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('recommendations');
+        const list = (data && data.recommendations) ? data.recommendations : [];
+        if (!Array.isArray(list) || list.length === 0) {
+            container.innerHTML = '<p class="text-muted">No recommendations available yet.</p>';
+            return;
+        }
+        container.innerHTML = '';
+        list.forEach(book => {
+            const card = document.createElement('div');
+            card.className = 'recommendation-card p-2';
+            card.innerHTML = `
+                <div class="card h-100 book-card" style="border-radius:20px;">
+                    <div class="position-relative">
+                        <img src="${book.cover_image || '/static/images/book_placeholder.svg'}" class="card-img-top" alt="${book.title}" loading="lazy" style="height:260px;">
+                        <div class="ai-badge">AI</div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">${book.title}</h5>
+                        <p class="card-text small text-muted mb-1">by ${book.author}</p>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            ${(book.genres || []).slice(0,3).map(g => `<span class="badge bg-light text-muted genre-tag">${g}</span>`).join('')}
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="star-rating text-warning mb-1">${renderStars(book.rating)}</div>
+                                <small class="text-muted">₹${book.price}</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary add-to-cart" data-book-id="${book.id}">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    })
+    .catch(err => console.error('Failed to load recommendations:', err));
+
+    // small helper for star rendering
+    function renderStars(rating) {
+        rating = Math.round((rating || 4) * 2) / 2; // round to .5
+        let out = '';
+        for (let i=1;i<=5;i++){
+            if (rating >= i) out += '★ ';
+            else if (rating >= i - 0.5) out += '☆ ';
+            else out += '☆ ';
+        }
+        return out.trim();
+    }
+
+    // Smooth drag-to-scroll for recently viewed strip
+    const strip = document.getElementById('recentStrip');
+    if (strip) {
+        let isDown = false, startX, scrollLeft;
+        strip.addEventListener('pointerdown', (e) => {
+            isDown = true;
+            startX = e.pageX - strip.offsetLeft;
+            scrollLeft = strip.scrollLeft;
+            strip.setPointerCapture(e.pointerId);
+        });
+        strip.addEventListener('pointermove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - strip.offsetLeft;
+            const walk = (x - startX) * 1.2; // scroll-fast
+            strip.scrollLeft = scrollLeft - walk;
+        });
+        ['pointerup','pointerleave','pointercancel'].forEach(ev => {
+            strip.addEventListener(ev, (e) => { isDown = false; try{ strip.releasePointerCapture(e.pointerId); }catch(e){} });
+        });
+    }
+
+    // Normalize status badges if present
+    document.querySelectorAll('.status-badge').forEach(function(el){
+        const s = (el.dataset.status || '').toLowerCase();
+        if (s.includes('deliver')) el.dataset.status = 'delivered';
+        if (s.includes('ship') || s.includes('in_transit') || s.includes('transit')) el.dataset.status = 'in_transit';
+        if (s.includes('process') || s.includes('pending')) el.dataset.status = s.includes('process') ? 'processing' : 'pending';
+        if (s.includes('cancel')) el.dataset.status = 'cancelled';
+    });
+
+    // simple add-to-cart handler (uses global function if present)
+    document.body.addEventListener('click', function(e){
+        const btn = e.target.closest('.add-to-cart');
+        if (!btn) return;
+        const id = btn.dataset.bookId;
+        if (typeof addToCart === 'function') {
+            addToCart(id);
+        } else {
+            // fallback: post to /add-to-cart/<id>/
+            fetch('/add-to-cart/' + id + '/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            }).then(r => {
+                if (r.ok) {
+                    // simple feedback
+                    btn.classList.add('btn-success');
+                    btn.textContent = 'Added';
+                    setTimeout(()=>{ btn.classList.remove('btn-success'); btn.textContent = 'Add to Cart'; }, 1600);
+                } else {
+                    alert('Failed to add to cart');
+                }
+            }).catch(()=>{ alert('Failed to add to cart'); });
+        }
+    });
+
+    function getCookie(name) {
+        const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return v ? v.pop() : '';
+    }
+});
+</script>
+{% endblock %}

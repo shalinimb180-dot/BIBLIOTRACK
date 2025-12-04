@@ -1,0 +1,27 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Genres - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Genres</h1>
+    <div class="row">
+        {% for g in genres %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-0 h-100" style="overflow:hidden;">
+                {% if g.thumbnail %}
+                <img src="{{ g.thumbnail }}" class="card-img-top" style="height:160px; object-fit:cover;" alt="{{ g.genre }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="mb-1">{{ g.genre }}</h5>
+                    <p class="mb-0 small text-muted">{{ g.count }} book{{ g.count|pluralize }}</p>
+                    <a href="{% url 'book_list' %}?genre={{ g.genre|urlencode }}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No genres found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Categories - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Categories</h1>
+    <div class="row">
+        {% for c in categories %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-0 h-100" style="overflow:hidden;">
+                {% if c.thumbnail %}
+                <img src="{{ c.thumbnail }}" class="card-img-top" style="height:160px; object-fit:cover;" alt="{{ c.category }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="mb-1">{{ c.category }}</h5>
+                    <p class="mb-0 small text-muted">{{ c.count }} book{{ c.count|pluralize }}</p>
+                    <a href="{% url 'book_list' %}?category={{ c.category|urlencode }}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No categories found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

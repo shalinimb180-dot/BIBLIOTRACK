@@ -1,0 +1,265 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Home - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="hero-section section text-center py-5 mb-5" style="background: linear-gradient(135deg, #1B263B 0%, #415A77 100%); color: white; border-radius: 20px;">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Discover Books Smarter with AI</h1>
+        <p class="lead mb-4">Your ultimate destination for discovering, buying, and selling books. Powered by AI to enhance your reading experience</p>
+        <a href="{% url 'book_list' %}" class="btn btn-warning btn-lg px-5 py-3 fw-bold" style="background: #E0A96D; border: none; color: #1B263B;">Browse Now</a>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form class="d-flex mb-3 align-items-center" method="GET" action="{% url 'book_list' %}" id="searchForm">
+                    <div class="search-container d-flex align-items-center" style="width:100%">
+                        <input class="form-control me-2" type="search" name="q" id="searchInput" placeholder="Search books by title, author, or genre..." aria-label="Search" style="border-radius: 25px; border: none; flex:1;">
+
+                        <label for="cameraInput" class="btn btn-light camera-btn ms-2" title="Visual search" style="border-radius: 25px; cursor: pointer;">
+                            <!-- Camera SVG -->
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 17a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M4 7h3l2-3h6l2 3h3a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </label>
+
+                        <button class="btn btn-light ms-2" type="submit" style="border-radius: 25px;">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+
+                        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" />
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5" id="new-arrivals">
+    <div class="col-12">
+        <div id="bookCarousel" class="carousel slide shadow-lg" data-bs-ride="carousel" style="border-radius: 20px; overflow: hidden;">
+            <div class="carousel-inner">
+                {% for book in featured_books %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ book.get_cover_url }}" class="d-block w-100" alt="{{ book.title }}" style="height: 400px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.5); border-radius: 10px;">
+                        <h3>{{ book.title }}</h3>
+                        <p class="mb-2">by {{ book.author }}</p>
+                        <div class="star-rating mb-2">
+                            {% for i in "12345"|make_list %}
+                                <i class="fas fa-star{% if book.rating < forloop.counter %}-half-alt{% endif %}"></i>
+                            {% endfor %}
+                            <span class="ms-1">{{ book.rating }}/5</span>
+                        </div>
+                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#bookCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#bookCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Deal of the Day Section -->
+{% if active_deals %}
+<div class="row mb-5" id="offers">
+    <div class="col-12">
+        <h2 class="mb-4 text-center fw-bold" style="color: #E0A96D;">🔥 Deal of the Day</h2>
+        <div class="row">
+            {% for deal in active_deals %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card deal-card h-100 position-relative" style="border: none; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <!-- Deal Badge -->
+                    <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-2 rounded-end" style="z-index: 2; font-weight: bold;">
+                        {{ deal.discount_percentage }}% OFF
+                    </div>
+
+                    <!-- Book Image -->
+                    <div class="position-relative">
+                        <img src="{{ deal.book.get_cover_url }}"
+                             class="card-img-top" alt="{{ deal.book.title }}" style="height: 300px; object-fit: cover;">
+                        <!-- Overlay with deal info -->
+                        <div class="position-absolute bottom-0 start-0 w-100 bg-gradient-dark p-3" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                            <div class="text-white">
+                                <h6 class="mb-1">{{ deal.book.title|truncatechars:25 }}</h6>
+                                <p class="mb-1 small">by {{ deal.book.author|truncatechars:20 }}</p>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-decoration-line-through text-muted me-2">₹{{ deal.book.price }}</span>
+                                    <span class="fw-bold text-warning">₹{{ deal.discounted_price }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <div class="star-rating mb-2">
+                            {% for i in "12345"|make_list %}
+                                <i class="fas fa-star{% if deal.book.rating < forloop.counter %}-half-alt{% endif %}"></i>
+                            {% endfor %}
+                            <span class="ms-1 small">{{ deal.book.rating }}/5</span>
+                        </div>
+
+                        <div class="mt-auto">
+                            <a href="{% url 'book_detail' deal.book.pk %}" class="btn btn-warning btn-sm w-100 mb-2" style="background: #E0A96D; border: none; color: #1B263B;">
+                                <i class="fas fa-eye"></i> View Deal
+                            </a>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'add_to_cart' deal.book.pk %}" class="btn btn-success btn-sm w-100">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Deal Timer -->
+                    <div class="card-footer bg-light p-2">
+                        <small class="text-muted">
+                            <i class="fas fa-clock"></i> Ends: {{ deal.end_date|date:"M d, H:i" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mb-5">
+    <div class="col-12 text-center" id="categories">
+        <h2 class="mb-4 fw-bold">Explore Categories</h2>
+        <div class="row">
+            {% for cat in all_categories|slice:":8" %}
+            <div class="col-md-3 mb-3">
+                <div class="card category-card text-center h-100" style="border: none; border-radius: 15px;">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <i class="fas fa-book fa-3x mb-3"></i>
+                        <h5>{{ cat }}</h5>
+                        <a href="{% url 'book_list' %}?category={{ cat|urlencode }}" class="btn btn-outline-primary mt-auto">Explore</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No categories available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<h2 class="mb-4 text-center fw-bold" id="top10">Top 10 Trending Books</h2>
+<div class="row">
+    {% for book in top_books %}
+    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
+        <div class="card book-card h-100 position-relative">
+            <div class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 rounded-end" style="font-size: 0.8rem;">
+                #{{ forloop.counter }}
+            </div>
+            {% if user.is_authenticated %}
+                <div class="position-absolute top-0 end-0 p-2">
+                <button class="wishlist-btn" data-book-id="{{ book.pk }}" onclick="toggleWishlist('{{ book.pk }}')">
+                    <i class="fas fa-heart"></i>
+                </button>
+            </div>
+            {% endif %}
+            <img src="{{ book.get_cover_url }}" class="card-img-top" alt="{{ book.title }}">
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title">{{ book.title|truncatechars:20 }}</h6>
+                <p class="card-text text-muted small">by {{ book.author|truncatechars:15 }}</p>
+                <div class="star-rating mb-2">
+                    {% for i in "12345"|make_list %}
+                        <i class="fas fa-star{% if book.rating < forloop.counter %}-half-alt{% endif %}"></i>
+                    {% endfor %}
+                    <span class="ms-1 small">{{ book.rating }}</span>
+                </div>
+                <p class="card-text fw-bold text-primary">₹{{ book.price }}</p>
+                <div class="mt-auto">
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary btn-sm w-100 mb-1">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'add_to_cart' book.pk %}" class="btn btn-success btn-sm w-100">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="mb-4 text-center fw-bold" id="bestsellers">Best Sellers</h2>
+<div class="row">
+    {% for book in best_sellers %}
+    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
+        <div class="card book-card h-100 position-relative">
+            <div class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 rounded-end" style="font-size: 0.8rem;">
+                <i class="fas fa-crown"></i>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="position-absolute top-0 end-0 p-2">
+                <button class="wishlist-btn" data-book-id="{{ book.pk }}" onclick="toggleWishlist('{{ book.pk }}')">
+                    <i class="fas fa-heart"></i>
+                </button>
+            </div>
+            {% endif %}
+            <img src="{{ book.get_cover_url }}" class="card-img-top" alt="{{ book.title }}">
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title">{{ book.title|truncatechars:20 }}</h6>
+                <p class="card-text text-muted small">by {{ book.author|truncatechars:15 }}</p>
+                <div class="star-rating mb-2">
+                    {% for i in "12345"|make_list %}
+                        <i class="fas fa-star{% if book.rating < forloop.counter %}-half-alt{% endif %}"></i>
+                    {% endfor %}
+                    <span class="ms-1 small">{{ book.rating }}</span>
+                </div>
+                <p class="card-text fw-bold text-primary">₹{{ book.price }}</p>
+                <div class="mt-auto">
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary btn-sm w-100 mb-1">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'add_to_cart' book.pk %}" class="btn btn-success btn-sm w-100">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% comment %} Chatbot toggle moved sitewide to `base.html`. {% endcomment %}
+{% include 'books/chatbot.html' %}
+<!-- Contact anchor -->
+<div id="contact" style="height:1px; width:1px; opacity:0;">&nbsp;</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Keep page-specific helper functions; chatbot logic is centralized in `static/js/custom.js`.
+
+function toggleWishlist(bookId) {
+        fetch('/books/' + bookId + '/add-to-wishlist/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCSRFToken()
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            const btn = event.target.closest('.wishlist-btn');
+            btn.classList.toggle('active');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}

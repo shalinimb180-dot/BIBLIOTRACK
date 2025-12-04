@@ -1,0 +1,301 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Book Club - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Book Club Forum</h1>
+                {% if user.is_authenticated %}
+                <a href="{% url 'create_post' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create New Post
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Search and Filter Form -->
+            <form method="get" class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Search posts..." value="{{ query }}">
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="sort" class="form-select" onchange="this.form.submit()">
+                            <option value="recent" {% if selected_sort == 'recent' %}selected{% endif %}>Recent</option>
+                            <option value="trending" {% if selected_sort == 'trending' %}selected{% endif %}>Trending</option>
+                            <option value="popular" {% if selected_sort == 'popular' %}selected{% endif %}>Popular</option>
+                            <option value="oldest" {% if selected_sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="category" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Categories</option>
+                            <!-- Add category options here if implemented -->
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Posts List -->
+            {% for post in posts %}
+            <div class="card mb-3 {% if post.is_pinned %}border-warning{% endif %}">
+                <div class="card-body">
+                    {% if post.is_pinned %}
+                    <div class="alert alert-warning py-1 px-2 mb-2">
+                        <i class="fas fa-thumbtack"></i> Pinned Post
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title">
+                                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
+                                    {{ post.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted mb-2">
+                                by <strong>{{ post.author.username }}</strong> • {{ post.created_at|date:"M d, Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-muted small">
+                                <i class="fas fa-comments"></i> {{ post.comment_count }} comments
+                            </div>
+                            <div class="text-muted small">
+                                <i class="fas fa-heart"></i> {{ post.like_count }} likes
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="card-text">
+                        {{ post.content|truncatechars:200 }}
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            Last activity: {{ post.updated_at|date:"M d, Y H:i" }}
+                        </small>
+                        <a href="{% url 'post_detail' post.pk %}" class="btn btn-sm btn-outline-primary">
+                            View Discussion
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                <h4>No posts yet</h4>
+                <p class="text-muted">Be the first to start a discussion!</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'create_post' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create First Post
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            {% if paginator.num_pages > 1 %}
+            <nav aria-label="Forum pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort={{ selected_sort }}&page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort={{ selected_sort }}&page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}sort={{ selected_sort }}&page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <!-- Trending Posts -->
+            {% if trending_posts %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-fire"></i> Trending This Week</h5>
+                </div>
+                <div class="card-body">
+                    {% for post in trending_posts %}
+                    <div class="mb-3">
+                        <h6>
+                            <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
+                                {{ post.title|truncatechars:50 }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">
+                            {{ post.recent_comments }} comments this week
+                        </small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Thread Recommendations -->
+            {% if recommendations %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Recommended for You</h5>
+                </div>
+                <div class="card-body">
+                    {% for post in recommendations %}
+                    <div class="mb-3">
+                        <h6>
+                            <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
+                                {{ post.title|truncatechars:50 }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">
+                            by {{ post.author.username }} • {{ post.created_at|date:"M d, Y" }}
+                        </small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Forum Stats -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Forum Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="h4 mb-0">{{ posts|length }}</div>
+                            <small class="text-muted">Posts</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="h4 mb-0">{{ total_comments }}</div>
+                            <small class="text-muted">Comments</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-link"></i> Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{% url 'book_list' %}" class="text-decoration-none">
+                                <i class="fas fa-book"></i> Browse Books
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'marketplace' %}" class="text-decoration-none">
+                                <i class="fas fa-store"></i> Marketplace
+                            </a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="mb-2">
+                            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                                <i class="fas fa-user"></i> My Dashboard
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const sendChatBtn = document.getElementById('send-chat-btn');
+
+    // Load initial chat messages
+    loadChatMessages();
+
+    // Send message on button click
+    sendChatBtn.addEventListener('click', sendChatMessage);
+
+    // Send message on Enter key
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    });
+
+    // Auto-refresh chat messages every 2 seconds for better real-time feel
+    setInterval(loadChatMessages, 2000);
+
+    function loadChatMessages() {
+        fetch('/books/api/chat-messages/')
+            .then(response => response.json())
+            .then(data => {
+                chatMessages.innerHTML = '';
+                data.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'mb-2';
+                    messageDiv.innerHTML = `
+                        <strong>${message.user}:</strong> ${message.message}
+                        <small class="text-muted">${new Date(message.created_at).toLocaleString()}</small>
+                        ${message.book ? `<br><small class="text-info">About: ${message.book}</small>` : ''}
+                    `;
+                    chatMessages.appendChild(messageDiv);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            })
+            .catch(error => console.error('Error loading chat messages:', error));
+    }
+
+    function sendChatMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        fetch('/books/api/send-chat-message/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            chatInput.value = '';
+            loadChatMessages(); // Refresh messages
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
+        });
+    }
+});
+</script>
+{% endblock %}

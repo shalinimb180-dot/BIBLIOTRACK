@@ -1,0 +1,1020 @@
+/* Custom CSS for BiblioTrack */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #F8F9FA;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Micro-interactions and Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes parallax {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-50px);
+    }
+}
+
+@keyframes progress {
+    0% {
+        width: 0%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Fade-in animations for book cards */
+.book-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.book-card:nth-child(1) { animation-delay: 0.1s; }
+.book-card:nth-child(2) { animation-delay: 0.2s; }
+.book-card:nth-child(3) { animation-delay: 0.3s; }
+.book-card:nth-child(4) { animation-delay: 0.4s; }
+.book-card:nth-child(5) { animation-delay: 0.5s; }
+.book-card:nth-child(6) { animation-delay: 0.6s; }
+.book-card:nth-child(7) { animation-delay: 0.7s; }
+.book-card:nth-child(8) { animation-delay: 0.8s; }
+.book-card:nth-child(9) { animation-delay: 0.9s; }
+.book-card:nth-child(10) { animation-delay: 1.0s; }
+
+/* Floating animation for chatbot icon */
+#chatbot-toggle {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Toggle positioning and badge */
+#chatbot-toggle {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    right: auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    border: none;
+}
+
+/* Force-left placement to avoid unexpected overrides from other rules or devtools shortcuts */
+#chatbot-toggle {
+    left: 24px !important;
+    bottom: 24px !important;
+    right: auto !important;
+    position: fixed !important;
+    z-index: 12000 !important;
+}
+
+/* Make the toggle visually obvious */
+#chatbot-toggle {
+    background: linear-gradient(135deg,#667eea 0%,#764ba2 100%) !important;
+    color: #fff !important;
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25) !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+
+#chatbot-toggle i { pointer-events: none; }
+
+#chatbot-toggle:focus {
+    outline: 3px solid rgba(102,126,234,0.35) !important;
+}
+
+/* Force-visible debug styles (make toggle obvious) */
+#chatbot-toggle {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    border: 2px solid rgba(255,255,255,0.12) !important;
+}
+
+/* Temporary red outline for debugging location (remove later) */
+#chatbot-toggle.debug-outline {
+    outline: 3px solid rgba(220,53,69,0.9) !important;
+}
+
+#chatbot-toggle:focus {
+    outline: 3px solid rgba(102,126,234,0.35);
+}
+
+.chatbot-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 11px;
+    line-height: 18px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Make inline book cards clickable and visually distinct */
+.book-card-inline {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: #fbfbfb;
+    margin-top: 8px;
+    text-decoration: none;
+    color: inherit;
+}
+.book-card-inline img { width:56px; height:80px; object-fit:cover; border-radius:4px; }
+.book-card-inline:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+
+/* Dashboard thumbnail sizes */
+.dashboard-thumb {
+    width: 80px;
+    height: 110px;
+    object-fit: cover;
+    display: block;
+}
+
+.dashboard-thumb-sm {
+    width: 64px;
+    height: 96px;
+    object-fit: cover;
+}
+
+/* Recommendation card image adjustments */
+.recommend-img, .book-card img, .card-img-top {
+    object-fit: cover;
+}
+
+.recommend-img { height: 220px; }
+
+/* Responsive: hide toggle on very small screens or reduce size */
+@media (max-width: 420px) {
+    #chatbot-toggle { left: 12px; bottom: 12px; width:48px; height:48px; }
+    .chatbot { width: 90%; left: 5%; right: auto; }
+}
+
+@media (max-width: 320px) {
+    /* hide if extremely small */
+    #chatbot-toggle { display: none; }
+}
+
+/* Parallax effect on hero section */
+.hero-section {
+    background-attachment: fixed;
+    background-size: cover;
+    animation: parallax 10s ease-in-out infinite alternate;
+}
+
+/* Progress bar loader */
+.progress-bar-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #E0A96D, #C77966);
+    z-index: 9999;
+    animation: progress 2s ease-in-out infinite;
+}
+
+/* Enhanced chatbot animations */
+.chatbot {
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Toast notifications */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10000;
+    animation: toastSlideIn 0.3s ease;
+    font-weight: 500;
+}
+
+.toast-notification.error {
+    background: #dc3545;
+}
+
+.toast-notification.hide {
+    animation: toastSlideOut 0.3s ease;
+}
+
+/* Modal for visual search */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+    transform: scale(1);
+}
+
+.upload-zone {
+    border: 2px dashed #E0A96D;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.upload-zone:hover {
+    border-color: #C77966;
+    background: #fff3cd;
+}
+
+.upload-zone.dragover {
+    border-color: #28a745;
+    background: #d4edda;
+}
+
+/* Loading spinner for recommendations */
+.recommendation-loader {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.recommendation-loader.show {
+    display: flex;
+}
+
+.spinner-border-ai {
+    width: 2rem;
+    height: 2rem;
+    border: 0.25em solid #E0A96D;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+/* Smooth scroll sections */
+.section {
+    scroll-margin-top: 80px;
+    transition: all 0.3s ease;
+}
+
+/* Enhanced hover effects */
+.book-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.category-card:hover {
+    transform: translateY(-5px) scale(1.05);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Carousel auto-scroll enhancement */
+.carousel-item {
+    transition: transform 0.6s ease-in-out;
+}
+
+/* Responsive animations */
+@media (max-width: 768px) {
+    .book-card {
+        animation-duration: 0.4s;
+    }
+
+    .hero-section {
+        animation: none;
+    }
+
+    .chatbot {
+        width: 90%;
+        right: 5%;
+    }
+}
+
+/* --- Dashboard: Recently Viewed horizontal strip --- */
+.recent-strip-wrapper { overflow: hidden; padding: 8px 4px; }
+.recent-strip {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding: 12px 6px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+.recent-strip::-webkit-scrollbar { height: 8px; }
+.recent-strip::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 8px; }
+.recent-card {
+    flex: 0 0 220px;
+    min-width: 200px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(16,24,40,0.06);
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    text-decoration: none;
+    color: inherit;
+    align-items: center;
+    scroll-snap-align: start;
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+.recent-card:hover { transform: translateY(-6px); box-shadow: 0 24px 40px rgba(16,24,40,0.12); }
+.recent-card-media img { width:110px; height:160px; object-fit:cover; border-radius:12px; }
+.recent-card-body h6 { font-weight:600; margin:0; }
+.recent-card-body p { margin:4px 0 6px 0; }
+
+/* --- Orders: status badges and layout --- */
+.order-card { border-radius: 18px; overflow: visible; }
+.order-icon { width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg,#F5F7FF, #ffffff); box-shadow: 0 6px 18px rgba(90,79,247,0.06); }
+.status-badge { display:inline-block; padding:6px 10px; border-radius: 999px; font-weight:600; font-size:0.85rem; }
+.status-badge[data-status="delivered"] { background: #E6F8EE; color: #1f8a4d; }
+.status-badge[data-status="in_transit"], .status-badge[data-status="shipped"] { background: #E8F4FF; color: #1f6fb8; }
+.status-badge[data-status="processing"], .status-badge[data-status="pending"] { background: #FFF6E8; color: #c77b00; }
+.status-badge[data-status="cancelled"] { background: #FDECEC; color: #c53030; }
+
+/* --- Recommendations grid and card polish --- */
+.recommend-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.recommendation-card { background: transparent; }
+.recommendation-card .card { border-radius: 20px; overflow: hidden; box-shadow: 0 14px 30px rgba(90,79,247,0.06); border: 1px solid rgba(90,79,247,0.06); }
+.recommendation-card .card .ai-badge, .ai-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(45deg,#5A4FF7,#7A68F8); color: #fff; padding:6px 10px; border-radius: 16px; font-weight:700; font-size:0.75rem; box-shadow: 0 8px 22px rgba(90,79,247,0.14); }
+.genre-tag { background: rgba(90,79,247,0.06); color: #5A4FF7; border-radius: 12px; padding:4px 8px; font-weight:600; }
+.recommendation-card .card img { transition: transform 0.36s ease; }
+.recommendation-card .card:hover img { transform: scale(1.07); }
+.recommendation-card .card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(90,79,247,0.08); }
+
+.add-to-cart { border-radius: 14px; padding:6px 12px; }
+
+@media (max-width: 1200px) {
+    .recommend-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+    .recommend-grid { grid-template-columns: repeat(2, 1fr); }
+    .recent-card { flex: 0 0 62%; min-width: 62%; }
+}
+@media (max-width: 480px) {
+    .recommend-grid { grid-template-columns: 1fr; }
+}
+
+/* Small utility for subtle gradient glow behind recommendation cards */
+.recommendation-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: 6px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(90,79,247,0.06), rgba(122,104,248,0.03));
+    z-index: -1;
+    filter: blur(18px);
+}
+
+/* Additional responsive tweaks to ensure dashboard and cards are mobile-friendly */
+/* Make thumbnails fluid on narrow screens */
+.dashboard-thumb, .dashboard-thumb-sm, .recommend-img, .book-card img, .recent-card-media img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Orders layout wraps on small screens */
+.order-card { display: flex; }
+@media (max-width: 768px) {
+    .order-card .card-body { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .order-card .me-3 { margin-right: 0 !important; }
+}
+
+/* Reduce spacing for very small screens */
+@media (max-width: 420px) {
+    .recent-card { flex: 0 0 80%; min-width: 80%; }
+    .recent-card-media img { width:84px; height:120px; }
+    .recommendation-card .card { border-radius: 16px; }
+}
+
+/* Show small prev/next controls for recent strip on mobile */
+.recent-strip-wrapper .recent-controls { display: none; }
+@media (max-width: 768px) {
+    .recent-strip-wrapper { padding-right: 48px; }
+    .recent-strip-wrapper .recent-controls { display: flex; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); flex-direction: column; gap:8px; }
+    .recent-strip-wrapper .recent-controls button { background: rgba(0,0,0,0.6); color: #fff; border: none; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+}
+
+/* keyboard focus visibility for cards */
+.recent-card:focus, .recommendation-card .card:focus, .order-card:focus { outline: 3px solid rgba(90,79,247,0.12); }
+
+
+
+/* Defensive reset: ensure footer text flows horizontally and isn't affected
+   by accidental transforms or writing-mode from other rules or extensions. */
+footer, footer * {
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    letter-spacing: normal !important;
+    transform: none !important;
+}
+/* Keep Bootstrap layout intact - do not override .row/.container/.col rules here. */
+
+/* Dashboard grid layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dashboard-col {
+    display: block;
+    padding: 0 12px;
+}
+
+.dashboard-col .card {
+    width: 100%;
+}
+
+/* Make recommendation area use a flexible grid inside the dashboard column */
+#recommendations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+#recommendations > .col-md-3 {
+    flex: 1 1 calc(25% - 16px);
+    max-width: calc(25% - 16px);
+    box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+    #recommendations > .col-md-3 {
+        flex: 1 1 calc(50% - 16px);
+        max-width: calc(50% - 16px);
+    }
+}
+
+@media (max-width: 992px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.navbar {
+    background: #1B263B !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #ffffff !important;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.book-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.book-card img {
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover img {
+    transform: scale(1.1);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #1B263B, #415A77);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 25px;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(27, 38, 59, 0.4);
+    background: linear-gradient(45deg, #415A77, #1B263B);
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 25px;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(86, 171, 47, 0.4);
+}
+
+.btn-pink {
+    background: linear-gradient(45deg, #E0A96D, #C77966);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 25px;
+    transition: all 0.3s ease;
+    color: #1B263B;
+    font-weight: bold;
+}
+
+.btn-pink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(224, 169, 109, 0.4);
+    background: linear-gradient(45deg, #C77966, #E0A96D);
+    color: #1B263B;
+}
+
+.carousel-item {
+    height: 400px;
+}
+
+.carousel-item img {
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+}
+
+.carousel-caption {
+    bottom: 50px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.search-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
+
+.form-control {
+    border-radius: 25px;
+    border: 2px solid #e9ecef;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #1B263B;
+    box-shadow: 0 0 0 0.2rem rgba(27, 38, 59, 0.25);
+}
+
+.star-rating {
+    color: #E0A96D;
+    font-size: 1.2rem;
+}
+
+.loading-spinner {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #1B263B;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.chatbot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+}
+
+.chatbot.show {
+    display: flex;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8f9fa;
+}
+
+.chat-input-container {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #e9ecef;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 80%;
+}
+
+.message.user {
+    background: linear-gradient(45deg, #1B263B, #415A77);
+    color: white;
+    margin-left: auto;
+}
+
+.message.bot {
+    background: white;
+    color: #333;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Bot link styling and inline cards */
+.bot-book-link {
+    color: #1B263B;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: rgba(27,38,59,0.04);
+    margin-right: 6px;
+}
+.bot-book-link:hover {
+    background: rgba(27,38,59,0.08);
+    text-decoration: underline;
+}
+.message.bot .book-card-inline {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: #fbfbfb;
+    margin-top: 8px;
+}
+.message.bot .book-card-inline img {
+    width: 56px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.wishlist-btn:hover {
+    background: #E0A96D;
+    color: white;
+}
+
+.wishlist-btn.active {
+    background: #E0A96D;
+    color: white;
+}
+
+.pagination {
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.page-link {
+    color: #1B263B;
+    border-color: #1B263B;
+    border-radius: 50% !important;
+    margin: 0 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-link:hover {
+    background: #1B263B;
+    color: white;
+}
+
+/* Footer Styles */
+footer {
+    background: linear-gradient(135deg, #1B263B 0%, #415A77 100%);
+    border-top: 3px solid #E0A96D;
+}
+
+footer h5, footer h6 {
+    color: #E0A96D;
+    font-weight: 600;
+}
+
+footer .social-links a:hover {
+    color: #E0A96D !important;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+footer .btn-pink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(224, 169, 109, 0.4);
+}
+
+footer hr {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+footer a:hover {
+    color: #E0A96D !important;
+    transition: color 0.3s ease;
+}
+
+/* Visual Search Section */
+.visual-search-section {
+    background: linear-gradient(135deg, rgba(27, 38, 59, 0.9), rgba(65, 90, 119, 0.9));
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px 20px;
+    margin: 30px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.visual-search-section .upload-area {
+    border: 2px dashed #E0A96D;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.visual-search-section .upload-area:hover {
+    border-color: #C77966;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.visual-search-section .upload-area i {
+    font-size: 3rem;
+    color: #E0A96D;
+    margin-bottom: 15px;
+}
+
+/* Book Club Section */
+.book-club-section {
+    background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+    border-radius: 20px;
+    padding: 40px 20px;
+    margin: 30px 0;
+}
+
+.book-club-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(224, 169, 109, 0.2);
+}
+
+.book-club-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    border-color: #E0A96D;
+}
+
+.book-club-card .club-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #E0A96D, #C77966);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+/* Recommendation Section */
+.recommendation-section {
+    background: linear-gradient(135deg, rgba(224, 169, 109, 0.1), rgba(199, 121, 102, 0.1));
+    border-radius: 20px;
+    padding: 40px 20px;
+    margin: 30px 0;
+    border: 1px solid rgba(224, 169, 109, 0.3);
+}
+
+.recommendation-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.recommendation-card .card-body {
+    padding: 20px;
+}
+
+.recommendation-card .ai-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(45deg, #E0A96D, #C77966);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .chatbot {
+        width: 90%;
+        height: 400px;
+        left: 5%;
+        right: auto;
+    }
+
+    footer .col-md-6.text-md-end {
+        text-align: start !important;
+        margin-top: 15px;
+    }
+
+    footer .social-links {
+        margin-top: 15px;
+    }
+
+    .visual-search-section .upload-area {
+        padding: 20px;
+    }
+
+    .book-club-section {
+        padding: 20px 10px;
+    }
+
+    .recommendation-section {
+        padding: 20px 10px;
+    }
+}

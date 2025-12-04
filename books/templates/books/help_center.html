@@ -1,0 +1,18 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Help Center - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1>Help Center</h1>
+        <p class="lead">Find answers to common questions and get support.</p>
+        <ul class="list-group">
+            <li class="list-group-item"><a href="{% url 'shipping_info' %}">Shipping Info</a></li>
+            <li class="list-group-item"><a href="{% url 'returns_info' %}">Returns &amp; Refunds</a></li>
+            <li class="list-group-item"><a href="{% url 'track_order' %}">Track Order</a></li>
+            <li class="list-group-item"><a href="{% url 'contact_us' %}">Contact Us</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Contact Us - BiblioTrack{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1>Contact Us</h1>
+        <p>If you have questions, reach out to us using the form below or email support@bibliotrack.example.</p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+            </div>
+            <button class="btn btn-pink" type="submit">Send Message</button>
+        </form>
+        {% comment %} Show recent contact messages to admins for convenience (if they exist). {% endcomment %}
+        {% if user.is_staff %}
+            <hr>
+            <h5>Recent messages</h5>
+            {% if recent_messages %}
+                {% for msg in recent_messages %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <p><strong>{{ msg.name }}</strong> &lt;{{ msg.email }}&gt; <small class="text-muted">{{ msg.created_at|date:"M d, Y H:i" }}</small></p>
+                            <p>{{ msg.message|truncatechars:200 }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No messages yet.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
